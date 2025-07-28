@@ -96,7 +96,7 @@ const updateActiveMenu = () => {
 // 打开 GitHub 链接
 const openGitHub = () => {
   // 使用默认浏览器打开 GitHub 链接
-  window.open('https://github.com', '_blank')
+  window.open('https://github.com/caoaolong/GameAssetCreator', '_blank')
 }
 
 // 切换主题

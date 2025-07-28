@@ -2,7 +2,7 @@
 
 > 专注于打造独立开发者的瑞士军刀！
 
-[![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://github.com/your-username/GameAssetCreator)
+[![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://github.com/caoaolong/GameAssetCreator)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Platform](https://img.shields.io/badge/platform-cross--platform-orange.svg)](https://wails.io)
 
@@ -29,6 +29,16 @@
 - **现代前端**：Vue 3 + TypeScript 构建
 - **原生体验**：Wails 框架提供原生桌面应用体验
 
+## 📸 界面预览
+
+<div align="center">
+
+![GameAssetCreator Screenshot](example.png)
+
+*GameAssetCreator 主界面 - 现代化的深色主题设计，简洁美观的用户界面*
+
+</div>
+
 ## 🚀 快速开始
 
 ### 系统要求
@@ -39,14 +49,14 @@
 ### 下载安装
 
 #### 方式一：直接下载
-1. 访问 [Releases](https://github.com/your-username/GameAssetCreator/releases) 页面
+1. 访问 [Releases](https://github.com/caoaolong/GameAssetCreator/releases) 页面
 2. 下载对应平台的安装包
 3. 运行安装程序
 
 #### 方式二：源码编译
 ```bash
 # 克隆项目
-git clone https://github.com/your-username/GameAssetCreator.git
+git clone https://github.com/caoaolong/GameAssetCreator.git
 cd GameAssetCreator
 
 # 安装依赖
@@ -157,7 +167,7 @@ GameAssetCreator/
 go install github.com/wailsapp/wails/v2/cmd/wails@latest
 
 # 克隆项目
-git clone https://github.com/your-username/GameAssetCreator.git
+git clone https://github.com/caoaolong/GameAssetCreator.git
 cd GameAssetCreator
 
 # 安装依赖
@@ -181,9 +191,9 @@ wails dev
 
 ## 📞 联系我们
 
-- **GitHub Issues**: [报告问题](https://github.com/your-username/GameAssetCreator/issues)
-- **Discussions**: [参与讨论](https://github.com/your-username/GameAssetCreator/discussions)
-- **Email**: your-email@example.com
+- **GitHub Issues**: [报告问题](https://github.com/caoaolong/GameAssetCreator/issues)
+- **Discussions**: [参与讨论](https://github.com/caoaolong/GameAssetCreator/discussions)
+- **Email**: eason105cc@163.com
 
 ---
 
@@ -191,7 +201,7 @@ wails dev
 
 **如果这个工具对你有帮助，请给个 ⭐️ 支持一下！**
 
-[![GitHub stars](https://img.shields.io/github/stars/your-username/GameAssetCreator?style=social)](https://github.com/your-username/GameAssetCreator)
-[![GitHub forks](https://img.shields.io/github/forks/your-username/GameAssetCreator?style=social)](https://github.com/your-username/GameAssetCreator)
+[![GitHub stars](https://img.shields.io/github/stars/caoaolong/GameAssetCreator?style=social)](https://github.com/caoaolong/GameAssetCreator)
+[![GitHub forks](https://img.shields.io/github/forks/caoaolong/GameAssetCreator?style=social)](https://github.com/caoaolong/GameAssetCreator)
 
 </div>
