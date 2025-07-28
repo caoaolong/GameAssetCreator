@@ -178,6 +178,29 @@ cd frontend && npm install
 wails dev
 ```
 
+## 📦 发布说明
+
+### 手动发布
+```bash
+# 使用发布脚本
+./scripts/release.sh 1.0.0
+
+# 或手动构建
+wails build
+```
+
+### 自动发布
+推送 Git 标签即可触发自动发布：
+```bash
+git tag v1.0.0
+git push origin v1.0.0
+```
+
+### 下载最新版本
+- **Windows**: [GameAssetCreator.exe](https://github.com/caoaolong/GameAssetCreator/releases/latest/download/GameAssetCreator-windows-amd64.zip)
+- **macOS**: [GameAssetCreator](https://github.com/caoaolong/GameAssetCreator/releases/latest/download/GameAssetCreator-macos-amd64.tar.gz)
+- **Linux**: [GameAssetCreator](https://github.com/caoaolong/GameAssetCreator/releases/latest/download/GameAssetCreator-linux-amd64.tar.gz)
+
 ## 📄 许可证
 
 本项目采用 [MIT 许可证](LICENSE) - 查看 [LICENSE](LICENSE) 文件了解详情。
