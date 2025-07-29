@@ -91,14 +91,14 @@ if [ "$UPLOAD_TO_GITHUB" = true ]; then
             echo "❌ 请先登录 GitHub CLI"
             echo "运行: gh auth login"
         else
-            ./scripts/upload-release.sh $VERSION
+            ./scripts/upload.sh $VERSION
         fi
     fi
 else
     echo ""
-    echo "📋 步骤 5: 跳过上传"
+    echo "📋 步骤 4: 跳过上传"
     echo "=================="
-    echo "💡 如需上传，请运行: ./scripts/upload-release.sh $VERSION"
+    echo "💡 如需上传，请运行: ./scripts/upload.sh $VERSION"
 fi
 
 # 完成

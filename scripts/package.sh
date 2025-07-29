@@ -137,32 +137,54 @@ echo "📦 创建安装程序..."
 if [[ "$OSTYPE" == "darwin"* ]]; then
     echo "📦 创建 macOS 安装程序..."
     
-    # 创建 DMG 安装程序
-    if command -v create-dmg &> /dev/null; then
+    echo "📦 创建 macOS 安装程序..."
+    cd "releases/v$VERSION"
+    
+    # 检查是否有 .app 文件
+    if [ -d "GameAssetCreator.app" ]; then
         echo "📦 创建 DMG 安装程序..."
-        cd "releases/v$VERSION"
         
-        # 检查是否有 .app 文件
-        if [ -d "GameAssetCreator.app" ]; then
-            create-dmg \
-                --volname "GameAssetCreator v$VERSION" \
-                --window-pos 200 120 \
-                --window-size 800 400 \
-                --icon-size 100 \
-                --volicon "../../appicon.icns" \
-                --icon "GameAssetCreator.app" 200 190 \
-                --hide-extension "GameAssetCreator.app" \
-                --app-drop-link 600 185 \
-                "GameAssetCreator-v$VERSION-macos.dmg" \
-                "GameAssetCreator.app"
-            echo "✅ DMG 安装程序已创建"
+        # 优先使用系统自带的 hdiutil 命令（更稳定）
+        if hdiutil create -volname "GameAssetCreator v$VERSION" -srcfolder "GameAssetCreator.app" -ov -format UDZO "GameAssetCreator-v$VERSION-macos.dmg" 2>/dev/null; then
+            echo "✅ DMG 安装程序已创建（使用系统命令）"
         else
-            echo "⚠️  未找到 GameAssetCreator.app，跳过 DMG 创建"
+            echo "⚠️  系统命令创建失败，尝试使用 create-dmg..."
+            
+            # 尝试使用 create-dmg（如果可用）
+            if command -v create-dmg &> /dev/null; then
+                if create-dmg \
+                    --volname "GameAssetCreator v$VERSION" \
+                    --window-pos 200 120 \
+                    --window-size 600 300 \
+                    --icon-size 80 \
+                    --icon "GameAssetCreator.app" 150 150 \
+                    --hide-extension "GameAssetCreator.app" \
+                    --app-drop-link 450 150 \
+                    --skip-jenkins \
+                    --no-internet-enable \
+                    --no-find-replace \
+                    "GameAssetCreator-v$VERSION-macos.dmg" \
+                    "GameAssetCreator.app" 2>/dev/null; then
+                    echo "✅ DMG 安装程序已创建（使用 create-dmg）"
+                else
+                    echo "❌ DMG 创建失败"
+                    echo "💡 建议："
+                    echo "   1. 检查应用权限设置"
+                    echo "   2. 使用 PKG 格式替代"
+                    echo "   3. 手动创建 DMG"
+                fi
+            else
+                echo "❌ create-dmg 未安装，DMG 创建失败"
+                echo "💡 建议："
+                echo "   1. 安装 create-dmg: brew install create-dmg"
+                echo "   2. 使用 PKG 格式替代"
+                echo "   3. 手动创建 DMG"
+            fi
         fi
-        cd ../..
     else
-        echo "⚠️  create-dmg 未安装，跳过 DMG 创建"
+        echo "⚠️  未找到 GameAssetCreator.app，跳过 DMG 创建"
     fi
+    cd ../..
 fi
 
 # Linux 安装程序
