@@ -46,6 +46,8 @@
 - 至少 4GB RAM
 - 500MB 可用磁盘空间
 
+
+
 ### 下载安装
 
 #### 方式一：直接下载
@@ -178,23 +180,78 @@ cd frontend && npm install
 wails dev
 ```
 
-## 📦 发布说明
+## 📦 构建和发布
 
-### 手动发布
+### 专业安装程序发布（推荐）
+
 ```bash
-# 使用发布脚本
-./scripts/release.sh 1.0.0
+# 构建、创建专业安装程序并上传到 GitHub Releases
+./scripts/professional-release.sh 1.0.0 --upload
 
-# 或手动构建
+# 仅构建和创建专业安装程序，不上传
+./scripts/professional-release.sh 1.0.0
+```
+
+### 分步构建和发布
+
+#### 1. 安装打包工具
+```bash
+# 安装必要的打包工具
+./scripts/install-tools.sh
+```
+
+#### 2. 构建和打包（推荐）
+```bash
+# 构建应用并创建专业安装程序
+./scripts/build-and-package.sh 1.0.0
+
+# 构建文件将保存在 build/bin/ 目录
+# 安装程序将保存在 releases/v1.0.0/ 目录
+```
+
+#### 3. 分步构建（可选）
+```bash
+# 仅构建应用
+./scripts/build-local.sh 1.0.0
+
+# 仅创建专业安装程序
+./scripts/create-installers.sh 1.0.0
+```
+
+#### 4. 上传到 GitHub Releases
+```bash
+# 上传到 GitHub Releases
+./scripts/upload-release.sh 1.0.0
+```
+
+### 跨平台构建并发布
+
+```bash
+# 仅构建，不上传
+./scripts/build-and-release.sh 1.0.0
+
+# 构建并自动上传到 GitHub Releases
+./scripts/build-and-release.sh 1.0.0 --upload
+```
+
+### 手动构建
+
+```bash
+# 安装依赖
+npm install
+
+# 构建应用
 wails build
+
+# 构建文件在 build/bin/ 目录
 ```
 
-### 自动发布
-推送 Git 标签即可触发自动发布：
-```bash
-git tag v1.0.0
-git push origin v1.0.0
-```
+### 环境要求
+
+- **Go 1.21+**
+- **Node.js 18+**
+- **Wails CLI**: `go install github.com/wailsapp/wails/v2/cmd/wails@latest`
+- **GitHub CLI** (可选): 用于自动上传到 GitHub Releases
 
 ### 下载最新版本
 - **Windows**: [GameAssetCreator.exe](https://github.com/caoaolong/GameAssetCreator/releases/latest/download/GameAssetCreator-windows-amd64.zip)

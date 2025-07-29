@@ -2,13 +2,13 @@
 
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { 
-  Menu, 
-  Fold, 
-  Expand, 
-  House, 
-  Document, 
-  Setting, 
+import {
+  Menu,
+  Fold,
+  Expand,
+  House,
+  Document,
+  Setting,
   User,
   Grid,
   Tools,
@@ -21,9 +21,10 @@ import {
   Moon,
   Sunny
 } from '@element-plus/icons-vue'
+
 import logoImage from './assets/images/logo.png'
-import githubImage from './assets/images/github.png'
 import { useTheme, THEME_TYPES } from './composables/useTheme'
+
 
 const router = useRouter()
 const route = useRoute()
@@ -95,8 +96,32 @@ const updateActiveMenu = () => {
 
 // 打开 GitHub 链接
 const openGitHub = () => {
-  // 使用默认浏览器打开 GitHub 链接
-  window.open('https://github.com/caoaolong/GameAssetCreator', '_blank')
+  const url = 'https://github.com/caoaolong/GameAssetCreator'
+
+  // 优先使用 Wails 的 BrowserOpenURL API
+  if (window.runtime && window.runtime.BrowserOpenURL) {
+    try {
+      window.runtime.BrowserOpenURL(url)
+      return
+    } catch (error) {
+      console.error('Wails BrowserOpenURL 失败:', error)
+    }
+  }
+
+  // 备用方案：直接使用 location.href 或创建临时链接
+  try {
+    window.location.href = url
+  } catch (error) {
+    // 方法2：创建临时链接
+    const link = document.createElement('a')
+    link.href = url
+    link.target = '_blank'
+    link.rel = 'noopener noreferrer'
+    link.style.display = 'none'
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+  }
 }
 
 // 切换主题
@@ -107,7 +132,6 @@ const toggleTheme = () => {
 
 // 设置主题模式
 const setThemeModeHandler = (mode) => {
-  console.log('切换主题模式:', mode)
   setThemeMode(mode)
 }
 
@@ -143,36 +167,19 @@ const menuItems = [
 <template>
   <div class="app-wrapper">
     <!-- 侧边栏 -->
-    <el-aside 
-      :width="sidebarWidth" 
-      class="sidebar"
-      :class="{ 'sidebar-mobile': isMobile }"
-    >
+    <el-aside :width="sidebarWidth" class="sidebar" :class="{ 'sidebar-mobile': isMobile }">
       <div class="logo-container">
-        <el-image 
-          :src="logoImage" 
-          alt="Logo" 
-          class="logo"
-          fit="contain"
-        />
-        <span v-show="!isCollapse" class="logo-text">GAC</span>
+        <el-image :src="logoImage" alt="Logo" class="logo-image" fit="contain" />
       </div>
-      
-      <el-menu
-        :default-active="activeMenu"
-        class="sidebar-menu"
-        :collapse="isCollapse"
-        @select="handleSelect"
-        background-color="#304156"
-        text-color="#bfcbd9"
-        active-text-color="#409EFF"
-      >
-        <el-menu-item 
-          v-for="item in menuItems" 
-          :key="item.index" 
-          :index="item.index"
-        >
-          <el-icon><component :is="item.icon" /></el-icon>
+
+      <el-menu :default-active="activeMenu" class="sidebar-menu" :collapse="isCollapse" @select="handleSelect"
+        :background-color="currentTheme === 'dark' ? '#1a1a1a' : '#f5f7fa'" 
+        :text-color="currentTheme === 'dark' ? '#e5e7eb' : '#606266'" 
+        :active-text-color="currentTheme === 'dark' ? '#409EFF' : '#409EFF'">
+        <el-menu-item v-for="item in menuItems" :key="item.index" :index="item.index">
+          <el-icon>
+            <component :is="item.icon" />
+          </el-icon>
           <template #title>{{ item.title }}</template>
         </el-menu-item>
       </el-menu>
@@ -184,73 +191,61 @@ const menuItems = [
       <el-header class="header">
         <div class="header-left">
           <!-- 折叠按钮 -->
-          <el-button 
-            v-show="!isMobile"
-            type="text" 
-            @click="isCollapse = !isCollapse"
-            class="collapse-btn"
-          >
-            <el-icon><Expand v-if="isCollapse" /><Fold v-else /></el-icon>
+          <el-button v-show="!isMobile" type="text" @click="isCollapse = !isCollapse" class="collapse-btn">
+            <el-icon>
+              <Expand v-if="isCollapse" />
+              <Fold v-else />
+            </el-icon>
           </el-button>
-          
+
           <el-breadcrumb separator="/">
-            <el-breadcrumb-item 
-              v-for="(item, index) in breadcrumbItems" 
-              :key="index"
-              :to="item.path"
-            >
+            <el-breadcrumb-item v-for="(item, index) in breadcrumbItems" :key="index" :to="item.path">
               {{ item.name }}
             </el-breadcrumb-item>
           </el-breadcrumb>
         </div>
-        
+
         <div class="header-right">
           <!-- 主题切换按钮 -->
           <el-dropdown @command="setThemeModeHandler" class="theme-dropdown">
             <el-button type="text" class="theme-btn" title="切换主题">
-              <el-icon v-if="currentTheme === 'dark'"><Moon /></el-icon>
-              <el-icon v-else><Sunny /></el-icon>
+              <el-icon v-if="currentTheme === 'dark'">
+                <Moon />
+              </el-icon>
+              <el-icon v-else>
+                <Sunny />
+              </el-icon>
             </el-button>
             <template #dropdown>
               <el-dropdown-menu>
-                <el-dropdown-item 
-                  :command="THEME_TYPES.LIGHT"
-                  :class="{ 'is-active': themeMode === THEME_TYPES.LIGHT }"
-                >
-                  <el-icon><Sunny /></el-icon>
+                <el-dropdown-item :command="THEME_TYPES.LIGHT"
+                  :class="{ 'is-active': themeMode === THEME_TYPES.LIGHT }">
+                  <el-icon>
+                    <Sunny />
+                  </el-icon>
                   浅色模式
                 </el-dropdown-item>
-                <el-dropdown-item 
-                  :command="THEME_TYPES.DARK"
-                  :class="{ 'is-active': themeMode === THEME_TYPES.DARK }"
-                >
-                  <el-icon><Moon /></el-icon>
+                <el-dropdown-item :command="THEME_TYPES.DARK" :class="{ 'is-active': themeMode === THEME_TYPES.DARK }">
+                  <el-icon>
+                    <Moon />
+                  </el-icon>
                   深色模式
                 </el-dropdown-item>
-                <el-dropdown-item 
-                  :command="THEME_TYPES.SYSTEM"
-                  :class="{ 'is-active': themeMode === THEME_TYPES.SYSTEM }"
-                  divided
-                >
-                  <el-icon><Setting /></el-icon>
+                <el-dropdown-item :command="THEME_TYPES.SYSTEM"
+                  :class="{ 'is-active': themeMode === THEME_TYPES.SYSTEM }" divided>
+                  <el-icon>
+                    <Setting />
+                  </el-icon>
                   跟随系统
                 </el-dropdown-item>
               </el-dropdown-menu>
             </template>
           </el-dropdown>
-          
-          <el-button 
-            type="text" 
-            @click="openGitHub"
-            class="github-btn"
-            title="访问 GitHub"
-          >
-            <el-image 
-              :src="githubImage" 
-              alt="GitHub" 
-              class="github-icon"
-              fit="contain"
-            />
+
+          <el-button type="text" @click="openGitHub" class="github-btn" title="访问 GitHub">
+            <svg class="github-icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+              <path d="M950.930286 512q0 143.433143-83.748571 257.974857t-216.283429 158.573714q-15.433143 2.852571-22.601143-4.022857t-7.168-17.115429l0-120.539429q0-55.442286-29.696-81.115429 32.548571-3.437714 58.587429-10.313143t53.686857-22.308571 46.299429-38.034286 30.281143-59.977143 11.702857-86.016q0-69.12-45.129143-117.686857 21.138286-52.004571-4.534857-116.589714-16.018286-5.12-46.299429 6.290286t-52.589714 25.161143l-21.723429 13.677714q-53.174857-14.848-109.714286-14.848t-109.714286 14.848q-9.142857-6.290286-24.283429-15.433143t-47.689143-22.016-49.152-7.68q-25.161143 64.585143-4.022857 116.589714-45.129143 48.566857-45.129143 117.686857 0 48.566857 11.702857 85.723429t29.988571 59.977143 46.006857 38.253714 53.686857 22.308571 58.587429 10.313143q-22.820571 20.553143-28.013714 58.88-11.995429 5.705143-25.746286 8.557714t-32.548571 2.852571-37.449143-12.288-31.744-35.693714q-10.825143-18.285714-27.721143-29.696t-28.306286-13.677714l-11.410286-1.682286q-11.995429 0-16.603429 2.56t-2.852571 6.582857 5.12 7.972571 7.460571 6.875429l4.022857 2.852571q12.580571 5.705143 24.868571 21.723429t17.993143 29.110857l5.705143 13.165714q7.460571 21.723429 25.161143 35.108571t38.253714 17.115429 39.716571 4.022857 31.744-1.974857l13.165714-2.267429q0 21.723429 0.292571 50.834286t0.292571 30.866286q0 10.313143-7.460571 17.115429t-22.820571 4.022857q-132.534857-44.032-216.283429-158.573714t-83.748571-257.974857q0-119.442286 58.88-220.306286t159.744-159.744 220.306286-58.88 220.306286 58.88 159.744 159.744 58.88 220.306286z" />
+            </svg>
             <span class="github-text">GitHub</span>
           </el-button>
         </div>
@@ -276,7 +271,7 @@ const menuItems = [
   top: 0;
   left: 0;
   height: 100vh;
-  background-color: #304156;
+  background-color: var(--el-bg-color-overlay);
   transition: all 0.3s ease;
   overflow: hidden;
   z-index: 1000;
@@ -290,25 +285,38 @@ const menuItems = [
 }
 
 .logo-container {
-  height: 60px;
+  height: 42px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #2b2f3a;
-  padding: 0 20px;
+  background-color: var(--el-bg-color);
+  padding: 10px;
   transition: all 0.3s ease;
   flex-shrink: 0;
 }
 
-.logo {
+.logo-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 32px;
   height: 32px;
   margin-right: 12px;
+  border-radius: 6px;
+  background: transparent;
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.logo-image {
+  width: 100%;
+  height: 100%;
+  border-radius: 6px;
   transition: all 0.3s ease;
 }
 
 .logo-text {
-  color: #fff;
+  color: var(--el-text-color-primary);
   font-size: 16px;
   font-weight: bold;
   white-space: nowrap;
@@ -387,6 +395,9 @@ const menuItems = [
   transition: all 0.3s ease;
   padding: 8px 12px;
   border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  z-index: 10;
 }
 
 .github-btn:hover {
@@ -398,6 +409,12 @@ const menuItems = [
   width: 16px;
   height: 16px;
   margin-right: 6px;
+  fill: var(--el-text-color-regular);
+  transition: all 0.3s ease;
+}
+
+.github-btn:hover .github-icon {
+  fill: var(--el-color-primary);
 }
 
 .github-text {
@@ -419,11 +436,11 @@ const menuItems = [
     z-index: 1000;
     height: 100vh;
   }
-  
+
   .main-container {
     margin-left: 0 !important;
   }
-  
+
   .collapse-btn {
     display: none;
   }
@@ -433,7 +450,7 @@ const menuItems = [
   .sidebar {
     position: fixed;
   }
-  
+
   .collapse-btn {
     display: block;
   }

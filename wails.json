@@ -9,5 +9,12 @@
   "author": {
     "name": "calong",
     "email": "eason105cc@163.com"
+  },
+  "info": {
+    "companyName": "GameAssetCreator",
+    "productName": "GameAssetCreator",
+    "productVersion": "dev",
+    "copyright": "Copyright © 2024 GameAssetCreator",
+    "comments": "Game Asset Creator Tool - Built using Wails (https://wails.app)"
   }
 }
